@@ -5,17 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MasterProdukDto {
+public class MasterKategoriDto {
     
     private String id;
 
-    private String code;
-
     private String nama;
 
-    private Double harga;
 
-    private int stok;
-
-    private MasterKategoriDto masterKategoriDto;
 }

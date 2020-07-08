@@ -2,12 +2,15 @@ package com.bayup.ecommerce.controller.masterdata;
 
 import java.util.Optional;
 
+import com.bayup.ecommerce.dto.masterdata.MasterProdukDto;
 import com.bayup.ecommerce.model.Response;
+import com.bayup.ecommerce.model.Response.ResponseStatus;
+import com.bayup.ecommerce.model.masterdata.MasterKategori;
 import com.bayup.ecommerce.model.masterdata.MasterProduk;
+import com.bayup.ecommerce.repository.masterdata.MasterKaterogiRepositori;
 import com.bayup.ecommerce.repository.masterdata.MasterProdukRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,14 +28,15 @@ public class MasterProdukController {
     @Autowired
     MasterProdukRepository masterProdukRepo;
 
+    @Autowired
+    MasterKaterogiRepositori masterKategoriRepo;
+
     //Get all Produk
     @GetMapping("/all")
     public Response allProduct(){
         
         Response result = new Response();
-        result.setStatusCode(HttpStatus.OK.value());
-        result.setMessage("Get All Product");
-        result.setData(masterProdukRepo.findAll());
+        result.Result(ResponseStatus.OK, masterProdukRepo.findAll());
 
         return result;
     }
@@ -43,31 +47,37 @@ public class MasterProdukController {
 
         Response result = new Response();
         if(masterProdukRepo.existsById(id)){
-            result.setData(masterProdukRepo.findById(id));
-            result.setMessage("Get User Successfull");
-            result.setStatusCode(HttpStatus.OK.value());
+            result.Result(ResponseStatus.OK, masterProdukRepo.findById(id));
 
         }else{
-            result.setData(null);
-            result.setMessage("User not found");
-            result.setStatusCode(HttpStatus.NOT_FOUND.value());
+            result.Result(ResponseStatus.OK, null);
         }
-
         return result;
 
     }
 
     //Create new Produk
     @PostMapping("/")
-    public Response createProduk(@RequestBody MasterProduk masterProduk){
+    public Response createProduk(@RequestBody MasterProdukDto masterProdukDto){
 
+        MasterProduk entity = new MasterProduk();
         Response result = new Response();
-        masterProdukRepo.save(masterProduk);
+        Optional<MasterKategori> kOptional = masterKategoriRepo.findById(masterProdukDto.getMasterKategoriDto().getId());
         
-        result.setStatusCode(HttpStatus.CREATED.value());
-        result.setMessage("Create new produk");
-        result.setData(masterProduk);
+        if(!kOptional.isPresent()) {
+            result.Result(ResponseStatus.NOT_FOUND, null);
+        }else{
+            
+            entity.setMasterKategori(kOptional.get());
+            entity.setCode(masterProdukDto.getCode());
+            entity.setNama(masterProdukDto.getNama());
+            entity.setHarga(masterProdukDto.getHarga());
+            entity.setStok(masterProdukDto.getStok());
 
+            masterProdukRepo.save(entity);
+
+            result.Result(ResponseStatus.CREATED, entity);
+        }
         return result;
     }
 
@@ -76,38 +86,46 @@ public class MasterProdukController {
     public Response deleteProduk(@PathVariable("id") String id){
 
         Response result = new Response();
-        masterProdukRepo.deleteById(id);
 
-        result.setStatusCode(HttpStatus.OK.value());
-        result.setMessage("Succes delete produk");
-        result.setData(null);
+        if(!masterProdukRepo.existsById(id)){
+            result.Result(ResponseStatus.NOT_FOUND, null);
+        }else{
+            masterProdukRepo.deleteById(id);
+
+            result.Result(ResponseStatus.OK, null);
+        }
+        
 
         return result;
     }
 
     //Edit Produk
     @PutMapping("/{id}")
-    public Response editProduk(@RequestBody MasterProduk masterProduk, 
+    public Response editProduk(@RequestBody MasterProdukDto masterProdukDto, 
     @PathVariable String id){
 
         Response result = new Response();
         Optional<MasterProduk> produkOptional = masterProdukRepo.findById(id);
         
         if(!produkOptional.isPresent()){
-            result.setStatusCode(HttpStatus.NOT_FOUND.value());
-            result.setData(null);
-            result.setMessage("Data not found");
+            result.Result(ResponseStatus.NOT_FOUND, null);
         }else{
-            MasterProduk newProduk =  produkOptional.get();
-            newProduk.setNama(masterProduk.getNama());
-            newProduk.setCode(masterProduk.getCode());
-            newProduk.setHarga(masterProduk.getHarga());
-            newProduk.setStok(masterProduk.getStok());
+            Optional<MasterKategori> kOptional = masterKategoriRepo.findById(masterProdukDto.getMasterKategoriDto().getId());
+            if(!kOptional.isPresent()){
+                result.Result(ResponseStatus.BAD_REQUEST, null);
+            }else{
+                MasterProduk newProduk =  produkOptional.get();
 
-            masterProdukRepo.save(newProduk);
-            result.setStatusCode(HttpStatus.OK.value());
-            result.setData(newProduk);
-            result.setMessage("Succes edit data");
+                newProduk.setNama(masterProdukDto.getNama());
+                newProduk.setCode(masterProdukDto.getCode());
+                newProduk.setHarga(masterProdukDto.getHarga());
+                newProduk.setStok(masterProdukDto.getStok());
+                newProduk.setMasterKategori(kOptional.get());
+
+                masterProdukRepo.save(newProduk);
+                result.Result(ResponseStatus.OK, newProduk);
+            }
+            
         }
         return result;
     }
