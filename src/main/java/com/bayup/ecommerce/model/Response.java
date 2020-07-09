@@ -23,6 +23,8 @@ public class Response {
         UNAUTHORIZED,
         BAD_REQUEST,
         FAILED_DEPENCENCY,
+        CONFLICT,
+        FORBIDDEN
     }
 
     public Response Result(ResponseStatus status, Object data){
@@ -52,6 +54,14 @@ public class Response {
             case FAILED_DEPENCENCY:
                 this.message = "Error dependent obejct";
                 this.statusCode = HttpStatus.FAILED_DEPENDENCY.value();
+                break;
+            case CONFLICT:
+                this.message = "Already Exist";
+                this.statusCode = HttpStatus.CONFLICT.value();
+                break;
+            case FORBIDDEN:
+                this.message = "Username or password incorrect";
+                this.statusCode = HttpStatus.FORBIDDEN.value();
                 break;
             default:
                 this.data = null;
