@@ -1,6 +1,5 @@
 package com.bayup.ecommerce.service;
 
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +23,8 @@ public class JwtUserDetailService implements UserDetailsService{
         if (user == null) {
 			throw new UsernameNotFoundException("User not found with username: " + username);
 		}
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-				new ArrayList<>());
+		return new AuthUserService(user);
+		// return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+		// 		new ArrayList<>());
 	}
 }

@@ -7,7 +7,7 @@ import com.bayup.ecommerce.model.Response;
 import com.bayup.ecommerce.model.Response.ResponseStatus;
 import com.bayup.ecommerce.model.masterdata.MasterKategori;
 import com.bayup.ecommerce.model.masterdata.MasterProduk;
-import com.bayup.ecommerce.repository.masterdata.MasterKaterogiRepositori;
+import com.bayup.ecommerce.repository.masterdata.MasterKategoriRepositori;
 import com.bayup.ecommerce.repository.masterdata.MasterProdukRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class MasterProdukController {
     MasterProdukRepository masterProdukRepo;
 
     @Autowired
-    MasterKaterogiRepositori masterKategoriRepo;
+    MasterKategoriRepositori masterKategoriRepo;
 
     //Get all Produk
     @GetMapping("/all")
