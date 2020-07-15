@@ -56,11 +56,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         
                 // dont authenticate this particular request
                 .authorizeRequests()
-                .antMatchers("/authenticate").permitAll()
-                .antMatchers("/user/**").permitAll()
+                //.antMatchers("/authenticate").permitAll()
+                //.antMatchers("/user/**").permitAll()
                 .antMatchers("/produk/**").hasAnyAuthority("ADMIN","USER")
                 .antMatchers("/kategori/**").hasAnyAuthority("ADMIN")
-                .antMatchers("/role/**").permitAll()
+                //.antMatchers("/role/**").permitAll()
                 .antMatchers("/auth/**").permitAll().
                 // all other requests need to be authenticated
                 anyRequest().authenticated().and().

@@ -9,8 +9,10 @@ import com.bayup.ecommerce.model.masterdata.MasterKategori;
 import com.bayup.ecommerce.model.masterdata.MasterProduk;
 import com.bayup.ecommerce.repository.masterdata.MasterKategoriRepositori;
 import com.bayup.ecommerce.repository.masterdata.MasterProdukRepository;
+import com.bayup.ecommerce.service.AuthUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +36,11 @@ public class MasterKategoriController {
     //Get all Kategori
     @GetMapping("/all")
     public Response getAllKategori(){
+        //AuthUserService principal = (AuthUserService) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        
         Response result = new Response();
+        //result.Result(ResponseStatus.OK, principal.getID());
         result.Result(ResponseStatus.OK, masterKategoriRepo.findAll());
 
         return result;

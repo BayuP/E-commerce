@@ -15,16 +15,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class AuthUserService implements UserDetails{
 
     private MasterUser masterUser;
-     
+
     public AuthUserService(MasterUser masterUser) {
         this.masterUser = masterUser;
     }
-    
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<MasterRole> roles = masterUser.getRoles();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-         
+
         for (MasterRole role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getNama()));
         }
@@ -40,6 +40,10 @@ public class AuthUserService implements UserDetails{
     @Override
     public String getUsername() {
         return masterUser.getUsername();
+    }
+
+    public String getID(){
+        return masterUser.getId();
     }
  
     @Override
