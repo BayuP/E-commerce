@@ -3,16 +3,15 @@ package com.bayup.ecommerce.controller.masterdata;
 import java.util.List;
 import java.util.Optional;
 
+import com.bayup.ecommerce.dto.masterdata.MasterKategoriDto;
 import com.bayup.ecommerce.model.Response;
 import com.bayup.ecommerce.model.Response.ResponseStatus;
 import com.bayup.ecommerce.model.masterdata.MasterKategori;
 import com.bayup.ecommerce.model.masterdata.MasterProduk;
 import com.bayup.ecommerce.repository.masterdata.MasterKategoriRepositori;
 import com.bayup.ecommerce.repository.masterdata.MasterProdukRepository;
-import com.bayup.ecommerce.service.AuthUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,12 +61,13 @@ public class MasterKategoriController {
 
     //Post Kategori
     @PostMapping("/")
-    public Response CreateKategori(@RequestBody MasterKategori masterKategori){
+    public Response CreateKategori(@RequestBody MasterKategoriDto masterKategoriDto){
         Response result = new Response();
+        MasterKategori entity = new MasterKategori();
+        entity.setNama(masterKategoriDto.getNama());
+        masterKategoriRepo.save(entity);
 
-        masterKategoriRepo.save(masterKategori);
-
-        result.Result(ResponseStatus.CREATED, masterKategori);
+        result.Result(ResponseStatus.CREATED, entity);
 
         return result;
     }
@@ -98,7 +98,7 @@ public class MasterKategoriController {
 
     //Edit kategori
     @PutMapping("/{id}")
-    public Response editProduk(@RequestBody MasterKategori masterKategori, 
+    public Response editProduk(@RequestBody MasterKategoriDto masterKategoriDto, 
     @PathVariable String id){
 
         Response result = new Response();
@@ -108,7 +108,7 @@ public class MasterKategoriController {
             result.Result(ResponseStatus.NOT_FOUND, null);
         }else{
             MasterKategori newKategori =  kategoriOptional.get();
-            newKategori.setNama(masterKategori.getNama());
+            newKategori.setNama(masterKategoriDto.getNama());
 
             masterKategoriRepo.save(newKategori);
             result.Result(ResponseStatus.OK, newKategori);
